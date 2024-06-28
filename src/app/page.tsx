@@ -1,38 +1,111 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { FaPaperPlane } from 'react-icons/fa';
 
 export default function Home() {
   const [message, setMessage] = useState('');
-  const [response, setResponse] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const messageListRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const messageText = message.trim();
+    if (messageText.length === 0) return;
+
+    addMessage(messageText, 'user');
+    setMessage('');
+
     try {
-      const res = await axios.post('http://127.0.0.1:5000/chat', { message });
-      setResponse(res.data.response);
+      setIsTyping(true);
+      const res = await axios.post('http://127.0.0.1:5000/chat', { message: messageText });
+      const chunks = res.data.response.split(''); // Simular la recepción de fragmentos
+
+      let reply = "";
+      const $botMessage = addMessage("", 'bot');
+
+      for (const chunk of chunks) {
+        reply += chunk;
+        await new Promise((resolve) => setTimeout(resolve, 50)); // Simular retraso en la escritura
+        $botMessage.textContent(reply);
+        messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+      }
     } catch (error) {
-      console.error("Error al enviar el mensaje", error);
+      console.error("Error fetching response:", error);
+      addMessage("Error fetching response.", 'bot');
+    } finally {
+      setIsTyping(false);
     }
   };
 
+  const addMessage = (text, sender) => {
+    const newMessage = { sender, text };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    return {
+      textContent: (content) => {
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages];
+          updatedMessages[updatedMessages.length - 1].text = content;
+          return updatedMessages;
+        });
+      }
+    };
+  };
+
+  useEffect(() => {
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, [messages]);
+  
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-800 text-white p-4">
-      <h1 className="text-4xl font-bold mb-8">Financial mentor</h1>
-      <nav className="space-y-4 mb-8">
-        <Link href="/stocks" className="text-xl font-medium text-blue-500 hover:underline">
-          Stock Data
+      <h1 className="text-4xl font-bold mb-8">Welcome to My Next.js App</h1>
+      <div className="flex space-x-4 mb-8">
+        <Link href="/crypto" className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+          <div>
+            <h2 className="mb-3 text-2xl font-semibold">
+              Crypto Data{" "}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                -&gt;
+              </span>
+            </h2>
+            <p className="m-0 max-w-[30ch] text-sm opacity-50">
+              Explore crypto data templates for Next.js.
+            </p>
+          </div>
         </Link>
-        <Link href="/crypto" className="text-xl font-medium text-blue-500 hover:underline">
-          Crypto Data
+  
+        <Link href="/stocks" className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+          <div>
+            <h2 className="mb-3 text-2xl font-semibold">
+              Stock Data{" "}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                -&gt;
+              </span>
+            </h2>
+            <p className="m-0 max-w-[30ch] text-sm opacity-50">
+              Explore stock data templates for Next.js.
+            </p>
+          </div>
         </Link>
-      </nav>
-      <div className="mb-4 w-full max-w-md p-4 bg-gray-700 rounded">
-        <h2 className="text-2xl font-semibold mb-4">Respuesta:</h2>
-        <p className="text-lg">{response}</p>
+      </div>
+      <div ref={messageListRef} className="mb-4 w-full max-w-md p-4 bg-gray-700 rounded overflow-y-auto h-64">
+        {messages.map((msg, index) => (
+          <div key={index} className={`mb-2 p-2 rounded ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
+            <strong>{msg.sender === 'user' ? 'You' : 'Bot'}:</strong> {msg.text}
+          </div>
+        ))}
+        {isTyping && (
+          <div className="mb-2 p-2 rounded bg-gray-300 text-black">
+            <strong>Bot:</strong> <span>...</span>
+          </div>
+        )}
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-md relative mb-8">
         <input
@@ -51,4 +124,6 @@ export default function Home() {
       </form>
     </main>
   );
+  
+  
 }
