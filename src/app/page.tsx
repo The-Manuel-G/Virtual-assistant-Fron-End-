@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
-import { FaPaperPlane } from 'react-icons/fa';
+import { FaPaperPlane, FaSpinner } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const messageText = message.trim();
-    if (messageText.length === 0) return;
+    if (messageText.length === 0 || isTyping) return;
 
     addMessage(messageText, 'user');
     setMessage('');
@@ -66,7 +66,7 @@ export default function Home() {
   }, [messages]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-800 text-white p-4">
+    <main className="flex min-h-screen flex-col items-center justify-start bg-gray-800 text-white p-4 pt-20">
       {!showMessages && (
         <>
           <h1 className="text-4xl font-bold mb-8">Welcome to My Next.js App</h1>
@@ -104,10 +104,10 @@ export default function Home() {
       {showMessages && (
         <motion.div
           initial={{ y: 0, opacity: 0 }}
-          animate={{ y: -50, opacity: 1 }}
+          animate={{ y: -10, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 50 }}
-          className="w-full max-w-lg mb-4 p-4 bg-gray-700 rounded overflow-y-auto"
-          style={{ minHeight: '300px' }}
+          className="w-full max-w-4xl mb-2 p-4 bg-gray-700 rounded overflow-y-auto"
+          style={{ minHeight: '300px', maxHeight: '400px', height: '400px' }}
           ref={messageListRef}
         >
           {messages.map((msg, index) => (
@@ -123,10 +123,10 @@ export default function Home() {
         </motion.div>
       )}
       <motion.div
-        initial={!showMessages ? { y: 0 } : { y: 50 }}
-        animate={!showMessages ? { y: 0 } : { y: 50 }}
+        initial={!showMessages ? { y: 0 } : { y: 10 }}
+        animate={!showMessages ? { y: 0 } : { y: 10 }}
         transition={{ type: 'spring', stiffness: 50 }}
-        className="w-full max-w-lg mb-8"
+        className="w-full max-w-lg mb-2"
       >
         <form onSubmit={handleSubmit} className="w-full relative">
           <input
@@ -134,16 +134,19 @@ export default function Home() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Escribe tu mensaje"
-            className="w-full p-4 pr-12 bg-gray-700 text-white border border-gray-600 rounded-full"
+            className="w-full p-3 pr-12 bg-gray-700 text-white border border-gray-600 rounded-full"
+            disabled={isTyping}
           />
           <button
             type="submit"
-            className="absolute right-0 top-0 mt-2 mr-2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 flex items-center justify-center"
+            className={`absolute right-0 top-0 mt-1.5 mr-2 p-2 rounded-full flex items-center justify-center ${isTyping ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'}`}
+            disabled={isTyping}
           >
-            <FaPaperPlane size={20} />
+            {isTyping ? <FaSpinner className="animate-spin" size={20} /> : <FaPaperPlane size={20} />}
           </button>
         </form>
       </motion.div>
     </main>
   );
 }
+
