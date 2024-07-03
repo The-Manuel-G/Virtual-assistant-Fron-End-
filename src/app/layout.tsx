@@ -1,3 +1,4 @@
+// app/layout.tsx
 "use client";
 
 import { Inter } from "next/font/google";
@@ -44,7 +45,7 @@ export default function RootLayout({
                 </Link>
               </NavbarItem>
               <NavbarItem className="navbar-item">
-                <Link color="foreground" href="./crypto.tsx">
+                <Link color="foreground" href="/crypto">
                   Explorar mercados
                 </Link>
               </NavbarItem>
