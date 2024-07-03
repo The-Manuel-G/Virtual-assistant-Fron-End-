@@ -2,32 +2,196 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
+/* Estilos globales */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Estilos personalizados para el Navbar */
+.navbar {
+  background-color: #1a1a1a; /* Fondo oscuro */
+  color: #ffffff; /* Texto blanco */
+  padding: 10px 20px;
+  border-bottom: 2px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.fixed-navbar {
+  position: fixed;
+}
+
+.main-content {
+  padding-top: 60px; /* Ajusta este valor según la altura de tu navbar */
+}
+
+.navbar .navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar .navbar-brand p {
+  margin-left: 10px;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.navbar-content-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.navbar-content {
+  display: flex;
+  gap: 20px;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar-content.center-content {
+  justify-content: center;
+  flex: 1;
+}
+
+.navbar-content.end-content {
+  justify-content: flex-end;
+}
+
+.navbar-item {
+  list-style: none;
+}
+
+.navbar-item a {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.navbar-item a:hover {
+  color: #00b4d8; /* Color al pasar el mouse */
+}
+
+.navbar-item button {
+  background-color: #00b4d8;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.navbar-item button:hover {
+  background-color: #0077b6; /* Color al pasar el mouse */
+}
+
+/* Estilos personalizados para el logo */
+.navbar svg {
+  fill: #00b4d8; /* Color del logo */
+  transition: fill 0.3s;
+}
+
+.navbar svg:hover {
+  fill: #0077b6; /* Color del logo al pasar el mouse */
+}
+
+.logo-container {
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.rounded-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Estilos para el botón de menú hamburguesa */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
   }
+
+  .navbar-content-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-content {
+    flex-direction: column;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .navbar-content.open {
+    max-height: 500px; /* Ajustar según la cantidad de contenido */
+    opacity: 1;
+  }
+
+  .navbar-content.center-content,
+  .navbar-content.end-content {
+    justify-content: center;
+  }
+
+  .navbar-item {
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-item a {
+    display: block;
+    padding: 10px 0;
+  }
+
+  .navbar-item button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Estilos personalizados para el footer */
+.footer {
+  background-color: #1a1a1a; /* Fondo negro */
+  color: #cccccc; /* Texto gris claro */
+  padding: 20px;
+  text-align: center;
+  border-top: 2px solid #333;
+}
+
+.footer p {
+  margin: 5px 0;
+}
+
+.footer p:nth-child(2) {
+  color: #b4a7d6; /* Texto morado */
+}
+
+.footer a {
+  color: #b4a7d6; /* Enlaces morados */
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #8e7cc3; /* Enlaces morados oscuros al pasar el mouse */
 }

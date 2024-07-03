@@ -1,10 +1,36 @@
 "use client";
 
+// page.tsx
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { FaPaperPlane, FaSpinner } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+
+const fallbackResponses = [
+  "Lo siento, no tengo la respuesta en este momento.",
+  "No estoy seguro de eso, pero te lo notificaré más adelante.",
+  "Actualmente no tengo información sobre eso.",
+  "Esa es una buena pregunta. Te responderé más adelante.",
+  "Estoy aprendiendo sobre eso, te mantendré informado.",
+  "Lo siento, no puedo responder eso en este momento.",
+  "No tengo la respuesta ahora, pero lo investigaré.",
+  "Esa información no está disponible ahora mismo.",
+  "No tengo datos sobre eso ahora mismo.",
+  "Lo siento, pero no tengo una respuesta para eso ahora."
+];
+
+const cache = {};
+const CACHE_EXPIRY_TIME = 60000; // 60 seconds
+
+const cleanCache = () => {
+  const now = Date.now();
+  for (const [key, value] of Object.entries(cache)) {
+    if (now - value.timestamp > CACHE_EXPIRY_TIME) {
+      delete cache[key];
+    }
+  }
+};
 
 export default function Home() {
   const [message, setMessage] = useState('');
@@ -12,6 +38,11 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const messageListRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(cleanCache, CACHE_EXPIRY_TIME);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +52,11 @@ export default function Home() {
     addMessage(messageText, 'user');
     setMessage('');
     setShowMessages(true);
+
+    if (cache[messageText]) {
+      addMessageWithTyping(cache[messageText].response, true);
+      return;
+    }
 
     try {
       setIsTyping(true);
@@ -36,9 +72,11 @@ export default function Home() {
         $botMessage.textContent(reply);
         messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
       }
+
+      cache[messageText] = { response: reply, timestamp: Date.now() }; // Almacenar la respuesta en la caché
     } catch (error) {
       console.error("Error fetching response:", error);
-      addMessage("Error fetching response.", 'bot');
+      addMessageWithTyping("No tenemos comunicación con el servidor en este momento.", false);
     } finally {
       setIsTyping(false);
     }
@@ -59,6 +97,22 @@ export default function Home() {
     };
   };
 
+  const addMessageWithTyping = async (text, fromCache) => {
+    const messageSuffix = fromCache ? " (obtenido de la caché)" : "";
+    const fullMessage = text + messageSuffix;
+    const chunks = fullMessage.split('');
+
+    let reply = "";
+    const $botMessage = addMessage("", 'bot');
+
+    for (const chunk of chunks) {
+      reply += chunk;
+      await new Promise((resolve) => setTimeout(resolve, 50)); // Simular retraso en la escritura
+      $botMessage.textContent(reply);
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  };
+
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
@@ -69,7 +123,8 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-start bg-gray-800 text-white p-4 pt-20">
       {!showMessages && (
         <>
-          <h1 className="text-4xl font-bold mb-8">Welcome to My Next.js App</h1>
+          <img src="/icono.jpg" alt="Logo" className="w-20 h-20 mb-4 rounded-full" />
+          <h1 className="text-4xl font-bold mb-8">Financial Mentor</h1>
           <div className="flex space-x-4 mb-8">
             <Link href="/crypto" className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
               <div>
@@ -112,12 +167,17 @@ export default function Home() {
         >
           {messages.map((msg, index) => (
             <div key={index} className={`mb-2 p-2 rounded ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}>
-              <strong>{msg.sender === 'user' ? 'You' : 'Bot'}:</strong> {msg.text}
+              {msg.sender === 'user' ? (
+                <strong>You:</strong>
+              ) : (
+                <img src="/icono.jpg" alt="Bot Logo" className="inline-block w-6 h-6 mr-2 rounded-full" />
+              )} {msg.text}
             </div>
           ))}
           {isTyping && (
             <div className="mb-2 p-2 rounded bg-gray-300 text-black">
-              <strong>Bot:</strong> <span>...</span>
+              <img src="/icono.jpg" alt="Bot Logo" className="inline-block w-6 h-6 mr-2 rounded-full" />
+              <span>...</span>
             </div>
           )}
         </motion.div>
@@ -144,9 +204,12 @@ export default function Home() {
           >
             {isTyping ? <FaSpinner className="animate-spin" size={20} /> : <FaPaperPlane size={20} />}
           </button>
+          
         </form>
+
       </motion.div>
+      
+    
     </main>
   );
 }
-
