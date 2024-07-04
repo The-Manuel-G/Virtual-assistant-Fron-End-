@@ -3,13 +3,11 @@ import EmployeeCard from '../../components/EmployeeCard';
 
 const employees = [
   { name: 'Ariel Naranjo', title: 'Lider Desarrollador', image: '/images/Ariel2.jpg', email: 'arielnaranjoi829@gmail.com', portfolio: 'https://full-stack-developer2025.netlify.app/#', github: 'https://github.com/The-Manuel-G', linkedin: 'https://www.linkedin.com/in/ariel-naranjo-281623232/' },
-  { name: 'Cody Fisher', title: 'Lead Security Associate', image: '/images/Raynier.jpg', email: 'cody.fisher@example.com', portfolio: 'https://codyportfolio.com', github: 'https://github.com/codyfisher', linkedin: 'https://linkedin.com/in/codyfisher' },
-  { name: 'Esther Howard', title: 'Assurance Administrator', image: '/images/esther.jpg', email: 'esther.howard@example.com', portfolio: 'https://estherportfolio.com', github: 'https://github.com/estherhoward', linkedin: 'https://linkedin.com/in/estherhoward' },
-  { name: 'Jenny Wilson', title: 'Chief Accountability Analyst', image: '/images/jenny.jpg', email: 'jenny.wilson@example.com', portfolio: 'https://jennyportfolio.com', github: 'https://github.com/jennywilson', linkedin: 'https://linkedin.com/in/jennywilson' },
-  { name: 'Kristin Watson', title: 'Investor Data Orchestrator', image: '/images/kristin.jpg', email: 'kristin.watson@example.com', portfolio: 'https://kristinportfolio.com', github: 'https://github.com/kristinwatson', linkedin: 'https://linkedin.com/in/kristinwatson' },
-  { name: 'Cameron Williamson', title: 'Product Infrastructure Executive', image: '/images/cameron.jpg', email: 'cameron.williamson@example.com', portfolio: 'https://cameronportfolio.com', github: 'https://github.com/cameronwilliamson', linkedin: 'https://linkedin.com/in/cameronwilliamson' },
-  { name: 'Courtney Henry', title: 'Investor Factors Associate', image: '/images/courtney.jpg', email: 'courtney.henry@example.com', portfolio: 'https://courtneyportfolio.com', github: 'https://github.com/courtneyhenry', linkedin: 'https://linkedin.com/in/courtneyhenry' },
-  { name: 'Theresa Webb', title: 'Global Division Officer', image: '/images/theresa.jpg', email: 'theresa.webb@example.com', portfolio: 'https://theresaportfolio.com', github: 'https://github.com/theresawebb', linkedin: 'https://linkedin.com/in/theresawebb' },
+  { name: 'Raynier Zorrilla', title: 'Desarrollador', image: '/images/Raynier.jpg', email: 'Zorrillaraynier2003@gmail.com', portfolio: 'https://idem-interrelation.000webhostapp.com', github: 'https://github.com/RaynierZorrilla', linkedin: 'https://www.linkedin.com/in/raynier-zorrilla-770145247/' },
+  { name: 'Dayely Maria Santana', title: 'Vocera/Colaborador', image: '/images/dayelyfoto.jpeg', email: 'dayelymariasantana.m@gmail.com', portfolio: 'https://portafoliodayely.netlify.app/', github: 'https://github.com/daysant14', linkedin: 'https://www.linkedin.com/in/dayely-maria-santana-3b36372b7/' },
+  { name: 'Marcos Reyes', title: 'Desarrollador', image: '/images/MarcosFoto.jpeg', email: 'marcosreyes24@hotmail.com', portfolio: 'https://jennyportfolio.com', github: 'https://github.com/Marck2524', linkedin: 'https://linkedin.com/in/jennywilson' },
+  { name: 'Laura Esther Ramírez', title: 'Vocera/Colaborador', image: '/images/laurafoto.jpeg', email: 'lauramenual@gmail.com', portfolio: 'https://kristinportfolio.com', github: 'https://github.com/lauraesth-00', linkedin: 'www.linkedin.com/in/laura-ramírez-data-analyst' },
+ 
 ];
 
 export default function Home() {
