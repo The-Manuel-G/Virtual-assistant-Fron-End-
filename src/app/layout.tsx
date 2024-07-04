@@ -1,4 +1,3 @@
-// app/layout.tsx
 "use client";
 
 import { Inter } from "next/font/google";
@@ -16,9 +15,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -36,22 +40,34 @@ export default function RootLayout({
             <NavbarContent className="navbar-content center-content">
               <NavbarItem className="navbar-item">
                 <Link color="foreground" href="#">
-                  AHORRAR
+                  Ahorrar 
                 </Link>
+              </NavbarItem>
+              <NavbarItem className="navbar-item dropdown">
+                <Link color="foreground" href="#" onClick={toggleDropdown}>
+                  Explorar mercados
+                </Link>
+                {isDropdownOpen && (
+                  <div className="dropdown-content">
+                    <Link href="/crypto">Cryptos</Link>
+                    <Link href="/stocks">Stock</Link>
+                    <Link href="/news">Noticias</Link>
+                  </div>
+                )}
               </NavbarItem>
               <NavbarItem className="navbar-item" isActive>
                 <Link href="/" aria-current="page">
-                  HOME
-                </Link>
-              </NavbarItem>
-              <NavbarItem className="navbar-item">
-                <Link color="foreground" href="/crypto">
-                  Explorar mercados
+                  Home
                 </Link>
               </NavbarItem>
               <NavbarItem className="navbar-item">
                 <Link color="foreground" href="#">
                   Jugar
+                </Link>
+              </NavbarItem>
+              <NavbarItem className="navbar-item">
+                <Link color="foreground" href="#">
+                  Quienes somos
                 </Link>
               </NavbarItem>
             </NavbarContent>
