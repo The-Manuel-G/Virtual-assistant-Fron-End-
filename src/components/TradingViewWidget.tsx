@@ -9,7 +9,7 @@ const TradingViewWidget = ({ symbol }) => {
       new window.TradingView.widget({
         container_id: containerRef.current,
         autosize: true,
-        symbol: symbol,
+        symbol: `NASDAQ:${symbol}`,
         interval: '1',
         timezone: 'Etc/UTC',
         theme: 'dark',
@@ -23,3 +23,4 @@ const TradingViewWidget = ({ symbol }) => {
 };
 
 export default TradingViewWidget;
+

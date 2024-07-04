@@ -1,5 +1,5 @@
 // components/CryptoCard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Modal from 'react-modal';
 import { Line } from 'react-chartjs-2';
@@ -24,13 +24,15 @@ ChartJS.register(
   Legend
 );
 
-// Necesario para configurar react-modal en Next.js
-if (typeof window !== 'undefined') {
-  Modal.setAppElement('#__next');
-}
-
 const CryptoCard = ({ crypto }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      Modal.setAppElement('body');
+    }
+  }, []);
+
   const {
     name,
     symbol,

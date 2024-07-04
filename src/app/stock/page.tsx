@@ -1,8 +1,10 @@
+// app/stocks/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import StockCard from '../components/StockCard';
+import StockCard from '../../components/StockCard';
+import { Circles } from 'react-loader-spinner';
 
 const StocksPage = () => {
   const [stocks, setStocks] = useState([]);
@@ -46,8 +48,17 @@ const StocksPage = () => {
     fetchStocks();
   }, []);
 
-  if (loading) return <p className="text-center mt-4">Loading...</p>;
-  if (error) return <p className="text-center mt-4">Error: {error.message}</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-black to-purple-900">
+        <Circles height="80" width="80" color="#4fa94d" ariaLabel="loading" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="text-center mt-4">Error: {error.message}</p>;
+  }
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
