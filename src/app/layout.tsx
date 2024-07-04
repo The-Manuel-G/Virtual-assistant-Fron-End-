@@ -3,10 +3,11 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import React, { useState } from "react";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from "@nextui-org/react";
 import { AcmeLogo } from "./AcmeLogo";
 import { FaBars, FaTimes } from 'react-icons/fa';
-
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,9 +29,9 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={inter.className}>
-      <body>
+      <body >
         <Navbar className="navbar fixed-navbar">
-          <NavbarBrand className="navbar-brand" >
+          <NavbarBrand className="navbar-brand">
             <AcmeLogo />
             <Link href="/" className="font-bold text-inherit">
               Financial
@@ -43,7 +44,7 @@ export default function RootLayout({
             <NavbarContent className="navbar-content center-content">
               <NavbarItem className="navbar-item">
                 <Link color="foreground" href="/ahorrar">
-                  Ahorrar 
+                  Ahorrar
                 </Link>
               </NavbarItem>
               <NavbarItem className="navbar-item dropdown">
@@ -93,6 +94,7 @@ export default function RootLayout({
           <p>© 2024 Financial Mentor</p>
           <p>Hecho con amor por </p>
         </footer>
+        <ToastContainer />
       </body>
     </html>
   );

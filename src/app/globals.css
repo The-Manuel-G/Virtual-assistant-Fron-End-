@@ -10,6 +10,18 @@ body {
   color: white;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
 
 .navbar-brand .font-bold {
   margin-left: 10px; /* Add left margin to "Financial" text */
