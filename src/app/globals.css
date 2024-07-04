@@ -10,6 +10,12 @@ body {
   color: white;
 }
 
+
+.navbar-brand .font-bold {
+  margin-left: 10px; /* Add left margin to "Financial" text */
+}
+
+
 .bg-gradient-to-b {
   background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
 }

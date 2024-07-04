@@ -7,6 +7,7 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from "@n
 import { AcmeLogo } from "./AcmeLogo";
 import { FaBars, FaTimes } from 'react-icons/fa';
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -29,9 +30,11 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <body>
         <Navbar className="navbar fixed-navbar">
-          <NavbarBrand className="navbar-brand">
+          <NavbarBrand className="navbar-brand" >
             <AcmeLogo />
-            <p className="font-bold text-inherit">Financial</p>
+            <Link href="/" className="font-bold text-inherit">
+              Financial
+            </Link>
           </NavbarBrand>
           <button className="menu-toggle" onClick={toggleMenu}>
             {isMenuOpen ? <FaTimes /> : <FaBars />}
@@ -39,7 +42,7 @@ export default function RootLayout({
           <div className={`navbar-content-wrapper ${isMenuOpen ? 'open' : ''}`}>
             <NavbarContent className="navbar-content center-content">
               <NavbarItem className="navbar-item">
-                <Link color="foreground" href="#">
+                <Link color="foreground" href="/ahorrar">
                   Ahorrar 
                 </Link>
               </NavbarItem>
@@ -50,8 +53,8 @@ export default function RootLayout({
                 {isDropdownOpen && (
                   <div className="dropdown-content">
                     <Link href="/crypto">Cryptos</Link>
-                    <Link href="/stocks">Stock</Link>
-                    <Link href="/news">Noticias</Link>
+                    <Link href="/stock">Stock</Link>
+                    <Link href="/noticias">Noticias</Link>
                   </div>
                 )}
               </NavbarItem>
@@ -61,12 +64,12 @@ export default function RootLayout({
                 </Link>
               </NavbarItem>
               <NavbarItem className="navbar-item">
-                <Link color="foreground" href="#">
+                <Link color="foreground" href="/game">
                   Jugar
                 </Link>
               </NavbarItem>
               <NavbarItem className="navbar-item">
-                <Link color="foreground" href="#">
+                <Link color="foreground" href="/quienes">
                   Quienes somos
                 </Link>
               </NavbarItem>
