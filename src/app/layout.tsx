@@ -9,13 +9,13 @@ import React from "react";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "../components/Navbar";
-import { SessionProvider } from "next-auth/react";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
+    //<SessionProvider>
       <html lang="en" className={inter.className}>
         <body>
           <Navbar />
@@ -29,6 +29,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ToastContainer />
         </body>
       </html>
-    </SessionProvider>
+    //</SessionProvider>
   );
 }

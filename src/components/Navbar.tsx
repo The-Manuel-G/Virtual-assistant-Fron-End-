@@ -7,13 +7,13 @@ import React, { useState } from 'react';
 import { Navbar as NextUINavbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from "@nextui-org/react";
 import { AcmeLogo } from "./AcmeLogo";
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useSession, signOut } from "next-auth/react";
+
 import { useRouter } from 'next/navigation';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { data: session } = useSession();
+
   const router = useRouter();
 
   const toggleMenu = () => {
@@ -46,9 +46,9 @@ const Navbar: React.FC = () => {
       <div className={`navbar-content-wrapper ${isMenuOpen ? 'open' : ''}`}>
         <NavbarContent className="navbar-content center-content">
           <NavbarItem className="navbar-item">
-            <a onClick={() => handleLinkClick("/ahorrar")} className="cursor-pointer">
+          <Link href="/ahorrar" aria-current="page">
               Ahorrar
-            </a>
+            </Link>
           </NavbarItem>
           <NavbarItem className="navbar-item dropdown">
             <a className="cursor-pointer" onClick={toggleDropdown}>
@@ -68,9 +68,9 @@ const Navbar: React.FC = () => {
             </Link>
           </NavbarItem>
           <NavbarItem className="navbar-item">
-            <a onClick={() => handleLinkClick("/game/inicio")} className="cursor-pointer">
-              Jugar
-            </a>
+          <Link href="/" aria-current="page">
+              Juego
+            </Link>
           </NavbarItem>
           <NavbarItem className="navbar-item">
             <Link color="foreground" href="/quienes">
@@ -79,20 +79,7 @@ const Navbar: React.FC = () => {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent className="navbar-content end-content">
-          {session ? (
-            <>
-              <NavbarItem className="navbar-item">
-                <span>Bienvenido, {session.user?.name}</span>
-              </NavbarItem>
-              <NavbarItem className="navbar-item">
-                <Button onClick={() => signOut()} color="primary" variant="flat">
-                  Logout
-                </Button>
-              </NavbarItem>
-            </>
-          ) : (
-            <>
-              <NavbarItem className="navbar-item">
+             <NavbarItem className="navbar-item">
                 <Link href="/login">Login</Link>
               </NavbarItem>
               <NavbarItem className="navbar-item">
@@ -100,8 +87,7 @@ const Navbar: React.FC = () => {
                   Sign Up
                 </Button>
               </NavbarItem>
-            </>
-          )}
+
         </NavbarContent>
       </div>
     </NextUINavbar>

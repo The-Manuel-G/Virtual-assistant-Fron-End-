@@ -1,15 +1,13 @@
-//src/pages/_app.tsx
-// src/pages/_app.tsx
-import { SessionProvider } from "next-auth/react";
-import Navbar from "../components/Navbar";
-import "../styles/globals.css";
+// pages/_app.tsx
+import type { AppProps } from 'next/app';
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+import '../app/globals.css';
+
+function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider session={session}>
-      <Navbar />
+    
       <Component {...pageProps} />
-    </SessionProvider>
+   
   );
 }
 
