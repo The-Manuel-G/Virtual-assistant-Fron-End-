@@ -1,25 +1,15 @@
-// Code: src/app/api/saveScore/route.ts
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+// src/app/api/saveScore/route.ts
+import { supabase } from '../../../src/utils/supabase/client';  // Ajusta la ruta según la estructura de tu proyecto
 
 export async function POST(req, res) {
   const { userId, score } = await req.json();
+
   try {
-    const user = await prisma.user.update({
-      where: { id: parseInt(userId) },
-      data: {
-        score: {
-          increment: score,
-        },
-        gamesPlayed: {
-          increment: 1,
-        },
-        lastPlayed: new Date(),
-      },
-    });
-    res.status(200).json(user);
+    // Incrementar la puntuación y los juegos jugados
+    await supabase.rpc('increment_games_played', { user_id: userId, increment_value: score });
+
+    res.status(200).json({ message: 'Score updated successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Error saving score' });
+    res.status(500).json({ error: error.message || 'Error saving score' });
   }
 }

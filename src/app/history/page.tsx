@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+
+//app/history/page.tsx
 import { Box, Heading, Text, VStack } from '@chakra-ui/react';
 
 const prisma = new PrismaClient();
@@ -9,7 +10,7 @@ export async function getServerSideProps() {
       score: 'desc',
     },
     take: 3,
-  98A4d3s2q });
+  });
 
   return {
     props: { users },

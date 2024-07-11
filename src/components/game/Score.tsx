@@ -1,3 +1,4 @@
+//src/components/game/Score.tsx
 "use client";  // Añadir esta línea
 
 import { Box, Button, Heading, Text, VStack, HStack, Icon } from '@chakra-ui/react';

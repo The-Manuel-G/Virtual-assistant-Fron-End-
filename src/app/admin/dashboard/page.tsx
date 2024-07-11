@@ -1,7 +1,9 @@
+//app/dashboard/page.tsx
 import { useState, useEffect } from 'react';
 import { Box, Heading, VStack, Text } from '@chakra-ui/react';
 import { Line } from 'react-chartjs-2';
 import { PrismaClient } from '@prisma/client';
+
 
 const prisma = new PrismaClient();
 

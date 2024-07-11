@@ -1,48 +1,70 @@
-// app/game/page.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // Importa desde 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '../../utils/supabase/client';
 import Question from '../../components/game/Question';
 import Score from '../../components/game/Score';
 import { questions } from '../../data/questions';
+import { TailSpin } from 'react-loader-spinner';
 
 export default function Game() {
-  const { data: session } = useSession();
   const router = useRouter();
+  const [session, setSession] = useState<any>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [timer, setTimer] = useState(10);
   const [playSound, setPlaySound] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState<{ message: string, type: 'success' | 'error' | 'info' } | null>(null);
 
   useEffect(() => {
-    if (!session) {
-      router.push('/login');
-      return;
-    }
-    const checkPlayLimit = async () => {
-      const response = await fetch(`/api/checkPlayLimit?userId=${session.user.id}`);
-      const data = await response.json();
-      if (!data.canPlay) {
-        alert("Límite de juego alcanzado. Solo puedes jugar dos veces al día.");
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+      setLoading(false);
+      if (!session) {
+        router.push('/login');
+      } else {
+        await checkPlayLimit(session.user.id);
+      }
+    };
+
+    const checkPlayLimit = async (userId: string) => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        setAlert({ message: "Error al verificar el límite de juego: " + error.message, type: 'error' });
+        return;
+      }
+
+      const today = new Date();
+      const lastPlayed = new Date(data.lastPlayed);
+      const canPlay = data.gamesPlayed < 2 || (today.getDate() !== lastPlayed.getDate() ||
+        today.getMonth() !== lastPlayed.getMonth() || today.getFullYear() !== lastPlayed.getFullYear());
+
+      if (!canPlay) {
+        setAlert({ message: "Límite de juego alcanzado. Solo puedes jugar dos veces al día.", type: 'info' });
         router.push('/');
       }
     };
-    checkPlayLimit();
-  }, [session, router]);
+
+    checkSession();
+  }, [router]);
 
   useEffect(() => {
-    if (timer > 0) {
-      const intervalId = setInterval(() => {
-        setTimer(timer - 1);
-      }, 1000);
-      return () => clearInterval(intervalId);
-    } else {
+    const intervalId = timer > 0 ? setInterval(() => setTimer(timer - 1), 1000) : null;
+    if (timer === 0) {
       handleAnswerOptionClick(false);
     }
+    return () => clearInterval(intervalId);
   }, [timer]);
 
   useEffect(() => {
@@ -58,25 +80,21 @@ export default function Game() {
       setScore(score + 1);
       setFeedback('correcto');
       setPlaySound('correct');
-      alert("¡Correcto!");
     } else {
       setFeedback('incorrecto');
       setPlaySound('incorrect');
-      alert("Incorrecto.");
     }
     const nextQuestion = currentQuestion + 1;
-    if (nextQuestion < questions.length) {
-      setTimeout(() => {
+    setTimeout(() => {
+      if (nextQuestion < questions.length) {
         setCurrentQuestion(nextQuestion);
         setFeedback('');
         setTimer(10);
-      }, 1000);
-    } else {
-      setTimeout(() => {
+      } else {
         setShowScore(true);
         handleSubmitScore();
-      }, 1000);
-    }
+      }
+    }, 1000);
   };
 
   const handleSubmitScore = async () => {
@@ -92,29 +110,64 @@ export default function Game() {
       if (!response.ok) {
         throw new Error(data.error || 'Error saving score');
       }
+      setAlert({ message: "Puntaje guardado correctamente", type: 'success' });
     } catch (error) {
-      alert("Error guardando el puntaje: " + error.message);
+      setAlert({ message: "Error guardando el puntaje: " + error.message, type: 'error' });
     }
   };
 
+  const renderAlert = () => {
+    if (!alert) return null;
+
+    let alertClass = '';
+    switch (alert.type) {
+      case 'success':
+        alertClass = 'bg-green-100 border-green-400 text-green-700';
+        break;
+      case 'error':
+        alertClass = 'bg-red-100 border-red-400 text-red-700';
+        break;
+      case 'info':
+        alertClass = 'bg-blue-100 border-blue-400 text-blue-700';
+        break;
+    }
+
+    return (
+      <div className={`border-l-4 p-4 mb-4 ${alertClass}`} role="alert">
+        <p className="font-bold">{alert.message}</p>
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <TailSpin color="#00BFFF" height={80} width={80} />
+      </div>
+    );
+  }
+
   return (
-    <div className="text-center py-10">
-      {showScore ? (
-        <Score score={score} total={questions.length} />
-      ) : (
-        <div className="space-y-4">
-          <div className="w-full bg-gray-800 rounded-full h-6">
-            <div className="bg-green-500 h-6 rounded-full" style={{ width: `${(timer / 10) * 100}%` }}></div>
-          </div>
-          <h2 className="text-3xl font-bold">{`Pregunta ${currentQuestion + 1}/${questions.length}`}</h2>
-          <Question
-            question={questions[currentQuestion]}
-            onAnswerOptionClick={handleAnswerOptionClick}
-            feedback={feedback}
-          />
-          <p className="text-xl">{`Tiempo restante: ${timer}s`}</p>
-        </div>
-      )}
-    </div>
+    <>
+      {renderAlert()}
+      <AnimatePresence>
+        {showScore ? (
+          <Score score={score} total={questions.length} />
+        ) : (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-center py-10">
+            <motion.div className="w-full bg-gray-800 rounded-full h-6" layout>
+              <motion.div className="bg-green-500 h-6 rounded-full" style={{ width: `${(timer / 10) * 100}%` }} layout />
+            </motion.div>
+            <h2 className="text-3xl font-bold">{`Pregunta ${currentQuestion + 1}/${questions.length}`}</h2>
+            <Question
+              question={questions[currentQuestion]}
+              onAnswerOptionClick={handleAnswerOptionClick}
+              feedback={feedback}
+            />
+            <p className="text-xl">{`Tiempo restante: ${timer}s`}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

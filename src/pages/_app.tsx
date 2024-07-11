@@ -1,13 +1,17 @@
-// pages/_app.tsx
-import type { AppProps } from 'next/app';
+// src/pages/_app.tsx
+import Navbar from "../components/Navbar";
+import "../app/globals.css"; // Ruta corregida al archivo CSS
+import { ChakraProvider } from "@chakra-ui/react";
 
-import '../app/globals.css';
-
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }) {
   return (
-    
+    <>
+      <Navbar />
+      <ChakraProvider>
       <Component {...pageProps} />
-   
+      </ChakraProvider>
+
+    </>
   );
 }
 

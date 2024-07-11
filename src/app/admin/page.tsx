@@ -1,3 +1,4 @@
+//app/admin/page.tsx
 "use client";  // Añadir esta línea
 
 import { useState } from 'react';

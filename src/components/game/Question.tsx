@@ -1,6 +1,22 @@
+//src/components/game/Question.tsx
+
 import { Box, Button, VStack, Heading } from '@chakra-ui/react';
 
-export default function Question({ question, onAnswerOptionClick, feedback }) {
+type QuestionProps = {
+  question: {
+    question: string;
+    options: string[];
+    answer: string;
+  } | undefined;
+  onAnswerOptionClick: (isCorrect: boolean) => void;
+  feedback: string;
+};
+
+export default function Question({ question, onAnswerOptionClick, feedback }: QuestionProps) {
+  if (!question) {
+    return null; // o un componente de carga o mensaje adecuado
+  }
+
   return (
     <Box>
       <Heading as="h3" size="md" mb={6}>{question.question}</Heading>

@@ -1,20 +1,35 @@
-//src/components/Navbar.tsx
+// src/components/Navbar.tsx
 "use client";
-
-
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Navbar as NextUINavbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from "@nextui-org/react";
 import { AcmeLogo } from "./AcmeLogo";
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { supabase } from '../utils/supabase/client';
 
-import { useRouter } from 'next/navigation';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const [session, setSession] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+    };
+
+    getSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -25,11 +40,12 @@ const Navbar: React.FC = () => {
   };
 
   const handleLinkClick = (path: string) => {
-    if (!session) {
-      router.push('/login');
-    } else {
-      router.push(path);
-    }
+    router.push(path);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
   };
 
   return (
@@ -46,7 +62,7 @@ const Navbar: React.FC = () => {
       <div className={`navbar-content-wrapper ${isMenuOpen ? 'open' : ''}`}>
         <NavbarContent className="navbar-content center-content">
           <NavbarItem className="navbar-item">
-          <Link href="/ahorrar" aria-current="page">
+            <Link href="/ahorrar" aria-current="page">
               Ahorrar
             </Link>
           </NavbarItem>
@@ -68,7 +84,7 @@ const Navbar: React.FC = () => {
             </Link>
           </NavbarItem>
           <NavbarItem className="navbar-item">
-          <Link href="/" aria-current="page">
+            <Link href="/game/inicio" aria-current="page">
               Juego
             </Link>
           </NavbarItem>
@@ -79,7 +95,20 @@ const Navbar: React.FC = () => {
           </NavbarItem>
         </NavbarContent>
         <NavbarContent className="navbar-content end-content">
-             <NavbarItem className="navbar-item">
+          {session ? (
+            <>
+              <NavbarItem className="navbar-item">
+                <span>Bienvenido, {session.user?.email}</span>
+              </NavbarItem>
+              <NavbarItem className="navbar-item">
+                <Button onClick={handleLogout} color="primary" variant="flat">
+                  Logout
+                </Button>
+              </NavbarItem>
+            </>
+          ) : (
+            <>
+              <NavbarItem className="navbar-item">
                 <Link href="/login">Login</Link>
               </NavbarItem>
               <NavbarItem className="navbar-item">
@@ -87,7 +116,8 @@ const Navbar: React.FC = () => {
                   Sign Up
                 </Button>
               </NavbarItem>
-
+            </>
+          )}
         </NavbarContent>
       </div>
     </NextUINavbar>
@@ -95,3 +125,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
